@@ -25,7 +25,7 @@ jobs:
           key: node_modules-${{hashFiles('yarn.lock')}}
           restore-keys: node_modules-
       - name: Install dependencies
-        run: yarn install && yarn add eslint -g
+        run: yarn install && yarn global add eslint
       - name: Lint files
         run: |
           eslint --max-warnings=0 ${{ steps.changed-files.outputs.all_changed_and_modified_files }}
@@ -46,7 +46,7 @@ jobs:
             *.scss
             *.css
       - name: Install dependencies
-        run: yarn install && yarn add stylelint -g
+        run: yarn install && yarn global add stylelint
       - name: Lint files
         run: |
           stylelint ${{ steps.changed-files.outputs.all_changed_and_modified_files }}
@@ -72,6 +72,6 @@ jobs:
             *.css
             *.scss
       - name: Install dependencies
-        run: yarn install && yarn add prettier -g
+        run: yarn install && yarn global add prettier
       - name: Run Prettier
         run: prettier --check ${{ steps.changed-files.outputs.all_changed_and_modified_files }}
