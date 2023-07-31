@@ -27,9 +27,9 @@ jobs:
         if: steps.changed-files-yaml.outputs.test_any_changed == 'true'
         run: |
           echo "One or more test file(s) has changed."
-          echo "List all the files that have changed: ${{ steps.changed-files-yaml.outputs.test_all_changed_files }}"
+          echo "List all the files that have changed: ${{ steps.changed-files-yaml.outputs.unmerged_files }}"
       - name: Run linters
-        run: eslint ${{ steps.changed-files.outputs.all_changed_files }} && stylelint ${{ steps.changed-files.outputs.all_changed_files }}
+        run: eslint ${{ steps.changed-files.outputs.all_changed_files }} && stylelint ${{ steps.changed-files.outputs.unmerged_files }}
   prettier:
     name: Prettier
     runs-on: ubuntu-latest
