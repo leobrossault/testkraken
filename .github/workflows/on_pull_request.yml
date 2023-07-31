@@ -18,8 +18,14 @@ jobs:
           files: |
             *.js
             *.vue
+      - name: Cache node modules
+        uses: actions/cache@v3
+        with:
+          path: node_modules
+          key: node_modules-${{hashFiles('yarn.lock')}}
+          restore-keys: node_modules-
       - name: Install dependencies
-        run: npm install && npm install eslint -g
+        run: yarn install && yarn add eslint -g
       - name: Lint files
         run: |
           eslint --max-warnings=0 ${{ steps.changed-files.outputs.all_changed_and_modified_files }}
@@ -40,7 +46,7 @@ jobs:
             *.scss
             *.css
       - name: Install dependencies
-        run: npm install && npm install stylelint -g
+        run: yarn install && yarn add stylelint -g
       - name: Lint files
         run: |
           stylelint ${{ steps.changed-files.outputs.all_changed_and_modified_files }}
@@ -66,6 +72,6 @@ jobs:
             *.css
             *.scss
       - name: Install dependencies
-        run: npm install && npm install prettier -g
+        run: yarn install && yarn add prettier -g
       - name: Run Prettier
         run: prettier --check ${{ steps.changed-files.outputs.all_changed_and_modified_files }}
