@@ -14,6 +14,9 @@ jobs:
       - name: Get changed files
         id: changed-files
         uses: tj-actions/changed-files@v37
+        with:
+          files: |
+            *.js
       - name: Install dependencies
         run: npm install && npm install eslint stylelint -g
       - name: List all changed files
