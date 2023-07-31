@@ -3,7 +3,7 @@ name: Run linting on pull request
 on:
   - pull_request
 jobs:
-  lint:
+  eslint:
     name: Lint with Eslint
     runs-on: ubuntu-latest
     steps:
@@ -11,6 +11,13 @@ jobs:
         uses: actions/checkout@v3
         with:
           fetch-depth: 0
+      - name: Get changed files
+        id: changed-files
+        uses: tj-actions/changed-files@v37
+        with:
+          files: |
+            *.js
+            *.vue
       - name: Cache node modules
         uses: actions/cache@v3
         with:
@@ -18,37 +25,65 @@ jobs:
           key: node_modules-${{hashFiles('yarn.lock')}}
           restore-keys: node_modules-
       - name: Install dependencies
-        run: yarn install && yarn global add eslint stylelint prettier
-      - name: Get JS changed files
-        id: changed-files
-        uses: tj-actions/changed-files@v37
-        with:
-          files: |
-            *.js
-            *.vue
-      - name: Eslint
+        run: yarn install && yarn global add eslint
+      - name: Lint files
         run: |
           eslint --max-warnings=0 ${{ steps.changed-files.outputs.all_changed_and_modified_files }}
-      - name: Get CSS changed files
+  stylelint:
+    name: Lint with Stylelint
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out Git repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - name: Get changed files
         id: changed-files
         uses: tj-actions/changed-files@v37
         with:
           files: |
-            *.css
-            *.scss
             *.vue
-      - name: Stylelint
+            *.scss
+            *.css
+      - name: Cache node modules
+        uses: actions/cache@v3
+        with:
+          path: node_modules
+          key: node_modules-${{hashFiles('yarn.lock')}}
+          restore-keys: node_modules-
+      - name: Install dependencies
+        run: yarn install && yarn global add stylelint
+      - name: Lint files
         run: |
           stylelint ${{ steps.changed-files.outputs.all_changed_and_modified_files }}
-      - name: Get all changed files
+  prettier:
+    name: Prettier
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out Git repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - name: Set up Node.js
+        uses: actions/setup-node@v1
+        with:
+          node-version: v18.16.0
+      - name: Get changed files
         id: changed-files
         uses: tj-actions/changed-files@v37
         with:
           files: |
+            *.vue
+            *.js
             *.css
             *.scss
-            *.js
-            *.vue
-      - name: Prettier
-        run: |
-          prettier --check ${{ steps.changed-files.outputs.all_changed_and_modified_files }}
+      - name: Cache node modules
+        uses: actions/cache@v3
+        with:
+          path: node_modules
+          key: node_modules-${{hashFiles('yarn.lock')}}
+          restore-keys: node_modules-
+      - name: Install dependencies
+        run: yarn install && yarn global add prettier
+      - name: Run Prettier
+        run: prettier --check ${{ steps.changed-files.outputs.all_changed_and_modified_files }}
