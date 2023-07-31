@@ -3,7 +3,7 @@ name: Run linting on pull request
 on:
   - pull_request
 jobs:
-  eslint:
+  lint:
     name: Lint with Eslint
     runs-on: ubuntu-latest
     steps:
@@ -18,6 +18,8 @@ jobs:
           files: |
             *.js
             *.vue
+            *.css
+            *.scss
       - name: Cache node modules
         uses: actions/cache@v3
         with:
@@ -25,53 +27,13 @@ jobs:
           key: node_modules-${{hashFiles('yarn.lock')}}
           restore-keys: node_modules-
       - name: Install dependencies
-        run: yarn install && yarn global add eslint
-      - name: Lint files
+        run: yarn install && yarn global add eslint stylelint prettier
+      - name: Eslint
         run: |
           eslint --max-warnings=0 ${{ steps.changed-files.outputs.all_changed_and_modified_files }}
-  stylelint:
-    name: Lint with Stylelint
-    runs-on: ubuntu-latest
-    steps:
-      - name: Check out Git repository
-        uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
-      - name: Get changed files
-        id: changed-files
-        uses: tj-actions/changed-files@v37
-        with:
-          files: |
-            *.vue
-            *.scss
-            *.css
-      - name: Install dependencies
-        run: yarn install && yarn global add stylelint
-      - name: Lint files
+      - name: Stylelint
         run: |
           stylelint ${{ steps.changed-files.outputs.all_changed_and_modified_files }}
-  prettier:
-    name: Prettier
-    runs-on: ubuntu-latest
-    steps:
-      - name: Check out Git repository
-        uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
-      - name: Set up Node.js
-        uses: actions/setup-node@v1
-        with:
-          node-version: v18.16.0
-      - name: Get changed files
-        id: changed-files
-        uses: tj-actions/changed-files@v37
-        with:
-          files: |
-            *.vue
-            *.js
-            *.css
-            *.scss
-      - name: Install dependencies
-        run: yarn install && yarn global add prettier
-      - name: Run Prettier
-        run: prettier --check ${{ steps.changed-files.outputs.all_changed_and_modified_files }}
+      - name: Prettier
+        run: |
+          prettier --check ${{ steps.changed-files.outputs.all_changed_and_modified_files }}

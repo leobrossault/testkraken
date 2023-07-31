@@ -15,7 +15,9 @@ module.exports = {
     ".github/",
     ".pretterrc",
     ".prettierignore",
-    ".stylelintignore"
+    ".stylelintignore",
+    "*.css",
+    "*.scss"
   ],
   // add your custom rules here
   rules: {
