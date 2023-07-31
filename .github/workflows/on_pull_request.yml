@@ -1,0 +1,54 @@
+name: Run linting on pull request
+
+on:
+  - pull_request
+jobs:
+  run-linters:
+    name: Lint
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out Git repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - name: Set up Node.js
+        uses: actions/setup-node@v1
+        with:
+          node-version: v18.16.0
+      - name: Install dependencies
+        run: npm install && npm install eslint stylelint -g
+      - name: Get changed files
+        id: changed-files
+        uses: tj-actions/changed-files@v37
+        with:
+          files: |
+            *.{vue, js, css, scss}
+      - name: Run step if test file(s) change
+        if: steps.changed-files-yaml.outputs.test_any_changed == 'true'
+        run: |
+          echo "One or more test file(s) has changed."
+          echo "List all the files that have changed: ${{ steps.changed-files-yaml.outputs.test_all_changed_files }}"
+      - name: Run linters
+        run: eslint ${{ steps.changed-files.outputs.all_changed_files }} && stylelint ${{ steps.changed-files.outputs.all_changed_files }}
+  prettier:
+    name: Prettier
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out Git repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - name: Set up Node.js
+        uses: actions/setup-node@v1
+        with:
+          node-version: v18.16.0
+      - name: Get changed files
+        id: changed-files
+        uses: tj-actions/changed-files@v37
+        with:
+          files: |
+            *.{vue, js, scss, css}
+      - name: Install dependencies
+        run: npm install && npm install prettier -g
+      - name: Run Prettier
+        run: prettier --check ${{ steps.changed-files.outputs.all_changed_files }}
