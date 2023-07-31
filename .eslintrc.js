@@ -10,7 +10,13 @@ module.exports = {
   },
   extends: ["@nuxtjs", "plugin:nuxt/recommended", "prettier"],
   plugins: ["only-warn"],
-  ignorePatterns: ["tests/"],
+  ignorePatterns: [
+    "tests/",
+    ".github/",
+    ".pretterrc",
+    ".prettierignore",
+    ".stylelintignore"
+  ],
   // add your custom rules here
   rules: {
     "vue/no-v-html": "off"
