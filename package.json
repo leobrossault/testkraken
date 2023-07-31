@@ -39,6 +39,8 @@
     "polyfill-array-includes": "^2.0.0",
     "qrcode": "^1.5.1",
     "string-replace-loader": "^2.3.0",
+    "stylelint-order": "^6.0.3",
+    "stylelint-scss": "^5.0.1",
     "swiper": "^5.4.5",
     "url-polyfill": "^1.1.12",
     "v-sanitize": "^0.0.9",
