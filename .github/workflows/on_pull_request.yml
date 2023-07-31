@@ -3,8 +3,8 @@ name: Run linting on pull request
 on:
   - pull_request
 jobs:
-  run-linters:
-    name: Lint
+  eslint:
+    name: Lint with Eslint
     runs-on: ubuntu-latest
     steps:
       - name: Check out Git repository
@@ -18,13 +18,32 @@ jobs:
           files: |
             *.js
             *.vue
+      - name: Install dependencies
+        run: npm install && npm install eslint -g
+      - name: Lint files
+        run: |
+          eslint ${{ steps.changed-files.outputs.all_changed_and_modified_files }}
+  stylelint:
+    name: Lint with Stylelint
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out Git repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - name: Get changed files
+        id: changed-files
+        uses: tj-actions/changed-files@v37
+        with:
+          files: |
+            *.vue
             *.scss
             *.css
       - name: Install dependencies
-        run: npm install && npm install eslint stylelint -g
+        run: npm install && npm install stylelint -g
       - name: Lint files
         run: |
-          eslint ${{ steps.changed-files.outputs.all_changed_and_modified_files }} && stylelint ${{ steps.changed-files.outputs.all_changed_and_modified_files }}
+          stylelint ${{ steps.changed-files.outputs.all_changed_and_modified_files }}
   prettier:
     name: Prettier
     runs-on: ubuntu-latest
@@ -42,8 +61,11 @@ jobs:
         uses: tj-actions/changed-files@v37
         with:
           files: |
-            *.{vue, js, scss, css}
+            *.vue
+            *.js
+            *.css
+            *.scss
       - name: Install dependencies
         run: npm install && npm install prettier -g
       - name: Run Prettier
-        run: prettier --check ${{ steps.changed-files.outputs.all_changed_files }}
+        run: prettier --check ${{ steps.changed-files.outputs.all_changed_and_modified_files }}
